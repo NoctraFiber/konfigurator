@@ -899,34 +899,54 @@
 
         // Load JSON data from external file
         async function loadData() {
+            console.log('[LOAD] Starting data load...');
             try {
                 // Try to fetch from external file first (works on web servers)
+                console.log('[LOAD] Attempting to fetch external JSON...');
                 const response = await fetch('data/products.json');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 productsData = await response.json();
+                console.log('[LOAD] External JSON loaded successfully:', productsData.produkte.length, 'products');
                 initializeApp();
             } catch (error) {
-                console.warn('Could not fetch data from external file, trying embedded data...', error);
+                console.warn('[LOAD] Could not fetch external file, trying embedded data...', error);
                 // Fall back to embedded data (works with file:// protocol)
                 try {
                     const dataScript = document.getElementById('productData');
-                    if (dataScript) {
-                        productsData = JSON.parse(dataScript.textContent);
-                        initializeApp();
-                    } else {
-                        throw new Error('No embedded data found');
+                    if (!dataScript) {
+                        throw new Error('No embedded data script tag found');
                     }
+
+                    console.log('[LOAD] Found embedded data script, parsing JSON...');
+                    const jsonText = dataScript.textContent.trim();
+                    console.log('[LOAD] JSON text length:', jsonText.length, 'characters');
+
+                    productsData = JSON.parse(jsonText);
+                    console.log('[LOAD] Embedded JSON parsed successfully:', productsData.produkte.length, 'products');
+                    console.log('[LOAD] First product:', productsData.produkte[0].produkt_name);
+
+                    initializeApp();
                 } catch (embeddedError) {
-                    console.error('Error loading embedded data:', embeddedError);
+                    console.error('[LOAD] Error loading embedded data:', embeddedError);
+                    console.error('[LOAD] Error stack:', embeddedError.stack);
                     document.getElementById('productGrid').innerHTML =
-                        '<div class="no-results"><div class="no-results-icon">⚠️</div><h3>Fehler beim Laden der Daten</h3><p>Die Produktdaten konnten nicht geladen werden. Bitte öffnen Sie die Datei über einen Webserver oder überprüfen Sie die Konsolenausgabe.</p></div>';
+                        '<div class="no-results"><div class="no-results-icon">⚠️</div><h3>Fehler beim Laden der Daten</h3><p>Die Produktdaten konnten nicht geladen werden. Bitte öffnen Sie die Datei über einen Webserver oder überprüfen Sie die Browser-Konsole (F12).</p></div>';
                 }
             }
         }
 
         function initializeApp() {
+            // Verify data is loaded
+            if (!productsData || !productsData.produkte) {
+                console.error('initializeApp called but productsData is not loaded');
+                document.getElementById('productGrid').innerHTML =
+                    '<div class="no-results"><div class="no-results-icon">⚠️</div><h3>Fehler beim Laden</h3><p>Produktdaten konnten nicht initialisiert werden.</p></div>';
+                return;
+            }
+
+            console.log('Initializing app with', productsData.produkte.length, 'products');
             filteredProducts = productsData.produkte;
             displayProducts(filteredProducts, 'productGrid');
             updateResultsCount(filteredProducts.length, 'resultsCount');
@@ -935,6 +955,12 @@
         }
 
         function displayStats() {
+            // Verify data is loaded
+            if (!productsData || !productsData.produkte) {
+                console.warn('displayStats called but productsData is not loaded');
+                return;
+            }
+
             const stats = {
                 total: productsData.produkte.length,
                 firestop: productsData.produkte.filter(p => p.produktfamilie.includes('FIRESTOP')).length,
