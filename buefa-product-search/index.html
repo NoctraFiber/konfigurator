@@ -963,6 +963,12 @@
         }
 
         function populateFilters() {
+            // Check if data is loaded
+            if (!productsData || !productsData.produkte) {
+                console.warn('Product data not yet loaded');
+                return;
+            }
+
             // Populate resin types
             const resinTypes = [...new Set(productsData.produkte
                 .map(p => p.technische_eigenschaften?.harz_typ)
@@ -1075,6 +1081,12 @@
         }
 
         function searchProducts() {
+            // Check if data is loaded
+            if (!productsData || !productsData.produkte) {
+                console.warn('Product data not yet loaded');
+                return;
+            }
+
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
 
             if (!searchTerm) {
@@ -1098,6 +1110,12 @@
         }
 
         function applyTechnicalFilters() {
+            // Check if data is loaded
+            if (!productsData || !productsData.produkte) {
+                console.warn('Product data not yet loaded');
+                return;
+            }
+
             const resinType = document.getElementById('filterResinType').value;
             const family = document.getElementById('filterFamily').value;
             const density = document.getElementById('filterDensity').value;
@@ -1148,6 +1166,12 @@
         }
 
         function resetTechnicalFilters() {
+            // Check if data is loaded
+            if (!productsData || !productsData.produkte) {
+                console.warn('Product data not yet loaded');
+                return;
+            }
+
             document.getElementById('filterResinType').value = '';
             document.getElementById('filterFamily').value = '';
             document.getElementById('filterDensity').value = '';
@@ -1159,6 +1183,12 @@
         }
 
         function filterByProcess() {
+            // Check if data is loaded
+            if (!productsData || !productsData.produkte) {
+                console.warn('Product data not yet loaded');
+                return;
+            }
+
             const hlu = document.getElementById('processHLU').checked;
             const rtm = document.getElementById('processRTM').checked;
             const vi = document.getElementById('processVI').checked;
@@ -1195,6 +1225,12 @@
         }
 
         function resetProcessFilter() {
+            // Check if data is loaded
+            if (!productsData || !productsData.produkte) {
+                console.warn('Product data not yet loaded');
+                return;
+            }
+
             document.getElementById('processHLU').checked = false;
             document.getElementById('processRTM').checked = false;
             document.getElementById('processVI').checked = false;
@@ -1204,6 +1240,12 @@
         }
 
         function filterByCertification() {
+            // Check if data is loaded
+            if (!productsData || !productsData.produkte) {
+                console.warn('Product data not yet loaded');
+                return;
+            }
+
             const hl = document.getElementById('certHL').value;
             const rs = document.getElementById('certRS').value;
 
@@ -1228,6 +1270,12 @@
         }
 
         function resetCertFilter() {
+            // Check if data is loaded
+            if (!productsData || !productsData.produkte) {
+                console.warn('Product data not yet loaded');
+                return;
+            }
+
             document.getElementById('certHL').value = '';
             document.getElementById('certRS').value = '';
             displayProducts(productsData.produkte, 'certProductGrid');
@@ -1235,6 +1283,14 @@
         }
 
         function findCombinations() {
+            // Check if data is loaded
+            if (!productsData || !productsData.produkte) {
+                console.warn('Product data not yet loaded');
+                const resultsContainer = document.getElementById('combinationsResults');
+                resultsContainer.innerHTML = '<div class="no-results"><p>Daten werden geladen...</p></div>';
+                return;
+            }
+
             const gelcoatId = document.getElementById('selectGelcoat').value;
             const resinId = document.getElementById('selectResin').value;
             const resultsContainer = document.getElementById('combinationsResults');
@@ -1338,6 +1394,12 @@
         }
 
         function updateCompareList() {
+            // Check if data is loaded
+            if (!productsData || !productsData.produkte) {
+                console.warn('Product data not yet loaded');
+                return;
+            }
+
             const container = document.getElementById('compareList');
 
             if (compareList.length === 0) {
@@ -1376,6 +1438,13 @@
         }
 
         function showComparison() {
+            // Check if data is loaded
+            if (!productsData || !productsData.produkte) {
+                console.warn('Product data not yet loaded');
+                alert('⚠️ Daten werden noch geladen. Bitte warten Sie einen Moment.');
+                return;
+            }
+
             if (compareList.length < 2) {
                 alert('⚠️ Bitte wählen Sie mindestens 2 Produkte zum Vergleichen aus.');
                 return;
@@ -1447,6 +1516,12 @@
         }
 
         function showProductDetail(productId) {
+            // Check if data is loaded
+            if (!productsData || !productsData.produkte) {
+                console.warn('Product data not yet loaded');
+                return;
+            }
+
             const product = productsData.produkte.find(p => p.produkt_id === productId);
             if (!product) return;
 
@@ -1519,6 +1594,13 @@
         }
 
         function exportResults(format) {
+            // Check if data is loaded
+            if (!productsData || !productsData.produkte) {
+                console.warn('Product data not yet loaded');
+                alert('⚠️ Daten werden noch geladen. Bitte warten Sie einen Moment.');
+                return;
+            }
+
             const products = filteredProducts.length > 0 ? filteredProducts : productsData.produkte;
 
             if (format === 'json') {
